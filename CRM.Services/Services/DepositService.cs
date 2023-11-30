@@ -31,7 +31,7 @@ namespace CRM.Services.Services
             {
                 VMDeposit vMDeposit = new VMDeposit();
                 int balance = 0;
-                List<Deposit> lstDeposit = await _crmDbContext.Deposit.Where(x => x.Status == (int)Enums.Status.Active).ToListAsync();
+                List<Deposit> lstDeposit = await _crmDbContext.Deposit.Where(x => x.Status == (int)Enums.Status.Active).OrderByDescending(x => x.CreatedDate).ToListAsync();
                 //foreach (Deposit deposit in lstDeposit)
                 //{
                 //    balance += deposit.DepositAmount;

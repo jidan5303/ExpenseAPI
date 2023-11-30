@@ -89,6 +89,12 @@ namespace CRM.API.Controllers
             return await _expenseTypeService.GetExpenseTypeByExpenseCategoryId(requestMessage);
         }
 
+        [HttpPost("GetAllExpenseType")]
+        public async Task<ResponseMessage> GetAllExpenseType(RequestMessage requestMessage)
+        {
+            return await _expenseTypeService.GetAllExpenseType(requestMessage);
+        }
+
         [HttpPost("GetAttachment")]
         public async Task<ResponseMessage> GetAttachment(RequestMessage requestMessage)
         {
