@@ -48,7 +48,7 @@ namespace CRM.Services
 
                 string sql = @" select e.ID as ExpenseID, e.ExpenseCategoryValue as month, e.DateTime as Date, et.Name as ExpenseType, e.Description, e.Amount, e.ExpensedBy from Expense as e
                                 left join ExpenseType as et on et.ID = e.ExpenseType
-                                where e.ExpenseCategoryValue = '" + monthWithYear + "' and e.Status = 1 and et.Status = 1 and et.ExpenseCategoryID = 1 order by e.ID desc";
+                                where e.ExpenseCategoryValue = '" + monthWithYear + "' and e.Status = 1 and et.Status = 1 and et.ExpenseCategoryID = 1 order by e.DateTime desc";
 
                 lstExpenseMonthlyAll = await _crmDbContext.VMExpenseMonthly.FromSqlRaw(sql).ToListAsync();
 
@@ -337,6 +337,10 @@ namespace CRM.Services
                        WHERE CONVERT(DATE, e.DateTime) = @dateOnly AND e.Status = 1 AND et.Status = 1 order by e.ID desc";
 
                 lstExpense = await _crmDbContext.VMExpenseMonthly.FromSqlRaw(sql, new SqlParameter("@dateOnly", dateOnly)).ToListAsync();
+                foreach(VMExpenseMonthly expense in lstExpense)
+                {
+                    expense.ExpenseAttachment = await _crmDbContext.ExpenseAttachment.Where(e => e.ExpenseID == expense.ExpenseID).FirstOrDefaultAsync();
+                }
 
                 responseMessage.ResponseObj = lstExpense;
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
@@ -371,7 +375,7 @@ namespace CRM.Services
                         if (objExpense.ID > 0)
                         {
                             //Update Mode
-                            Expense existingExpense = await this._crmDbContext.Expense.FirstOrDefaultAsync(x => x.ID == objExpense.ID && x.Status == (int)Enums.Status.Active);
+                            Expense existingExpense = await this._crmDbContext.Expense.AsNoTracking().FirstOrDefaultAsync(x => x.ID == objExpense.ID && x.Status == (int)Enums.Status.Active);
                             if (existingExpense != null)
                             {
                                 actionType = (int)Enums.ActionType.Update;
@@ -431,6 +435,40 @@ namespace CRM.Services
                         responseMessage.ResponseObj = res.Entity;
 
                         await _crmDbContext.SaveChangesAsync();
+                    }
+
+                    else if(!string.IsNullOrEmpty(objExpense.FileName) && actionType == (int)Enums.ActionType.Update)
+                    {
+                        //** (a) save at folder
+                        string filePathsaved = string.Empty;
+                        bool result = SaveFile(objExpense.FileName, rootURL, objExpense.Base64File, out filePathsaved);
+
+                        ExpenseAttachment existExpenseAttachment = _crmDbContext.ExpenseAttachment.FirstOrDefault(e => e.ExpenseID == objExpense.ID);
+                        if(existExpenseAttachment != null)
+                        {
+                            existExpenseAttachment.FileName = objExpense.FileName;
+                            existExpenseAttachment.FilePath = filePathsaved;
+                            existExpenseAttachment.UpdatedDate = DateTime.Now;
+                            existExpenseAttachment.UpdatedBy = requestMessage.UserID;
+
+                            _crmDbContext.Update(existExpenseAttachment);
+                            await _crmDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            ExpenseAttachment expenseAttachmentObj = new ExpenseAttachment();
+                            expenseAttachmentObj.ExpenseID = objExpense.ID;
+                            expenseAttachmentObj.FileName = objExpense.FileName;
+                            expenseAttachmentObj.FilePath = filePathsaved;
+
+                            expenseAttachmentObj.Status = (int)Enums.Status.Active;
+                            expenseAttachmentObj.CreatedDate = DateTime.Now;
+                            expenseAttachmentObj.CreatedBy = requestMessage.UserID;
+                            var res = await _crmDbContext.ExpenseAttachment.AddAsync(expenseAttachmentObj);
+                            responseMessage.ResponseObj = res.Entity;
+
+                            await _crmDbContext.SaveChangesAsync();
+                        }
                     }
 
                     responseMessage.Message = MessageConstant.SavedSuccessfully;

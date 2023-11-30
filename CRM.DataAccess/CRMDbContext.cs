@@ -92,6 +92,7 @@ namespace CRM.DataAccess
         public virtual DbSet<ExpensePermission> ExpensePermission { get; set; }
         public virtual DbSet<ExpenseUserSession> ExpenseUserSession { get; set; }
         public virtual DbSet<ExpenseUser> ExpenseUser { get; set; }
+        public virtual DbSet<Deposit> Deposit { get; set; }
 
         public virtual DbSet<VMExpenseMonthlySummary> VMExpenseMonthlySummary { get; set; }
         public virtual DbSet<VMExpenseMonthly> VMExpenseMonthly { get; set; }
@@ -119,6 +120,12 @@ namespace CRM.DataAccess
             {
                 entity.HasKey(x => x.ID);
                 entity.ToTable("ExpenseType");
+            });
+
+            modelBuilder.Entity<Deposit>(entity =>
+            {
+                entity.HasKey(x => x.DepositID);
+                entity.ToTable("Deposit");
             });
 
             modelBuilder.Entity<VMExpenseMonthlySummary>(entity =>

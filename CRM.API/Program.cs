@@ -159,6 +159,7 @@ builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IExpenseTypeService, ExpenseTypeService>();
 builder.Services.AddScoped<IExpenseAttachmentService, ExpenseAttachmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IDepositService, DepositService>();
 builder.Services.AddScoped<IExpensePermissionService, ExpensePermissionService>();
 
 /*-------------Service register area-------END-----*/
