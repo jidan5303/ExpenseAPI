@@ -93,6 +93,10 @@ namespace CRM.DataAccess
         public virtual DbSet<ExpenseUserSession> ExpenseUserSession { get; set; }
         public virtual DbSet<ExpenseUser> ExpenseUser { get; set; }
         public virtual DbSet<Deposit> Deposit { get; set; }
+        public virtual DbSet<LeaveEmployee> LeaveEmployee { get; set; }
+        public virtual DbSet<LeaveType> LeaveType { get; set; }
+        public virtual DbSet<LeaveRequest> LeaveRequest { get; set; }
+        public virtual DbSet<LeaveDuration> LeaveDuration { get; set; }
 
         public virtual DbSet<VMExpenseMonthlySummary> VMExpenseMonthlySummary { get; set; }
         public virtual DbSet<VMExpenseMonthly> VMExpenseMonthly { get; set; }
@@ -126,6 +130,27 @@ namespace CRM.DataAccess
             {
                 entity.HasKey(x => x.DepositID);
                 entity.ToTable("Deposit");
+            });
+
+            modelBuilder.Entity<LeaveEmployee>(entity =>
+            {
+                entity.HasKey(x => x.EmployeeID);
+                entity.ToTable("LeaveEmployee");
+            });
+            modelBuilder.Entity<LeaveType>(entity =>
+            {
+                entity.HasKey(x => x.LeaveTypeID);
+                entity.ToTable("LeaveType");
+            });
+            modelBuilder.Entity<LeaveRequest>(entity =>
+            {
+                entity.HasKey(x => x.LeaveRequestID);
+                entity.ToTable("LeaveRequest");
+            });
+            modelBuilder.Entity<LeaveDuration>(entity =>
+            {
+                entity.HasKey(x => x.LeaveDurationID);
+                entity.ToTable("LeaveDuration");
             });
 
             modelBuilder.Entity<VMExpenseMonthlySummary>(entity =>

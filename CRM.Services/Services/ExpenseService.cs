@@ -48,7 +48,7 @@ namespace CRM.Services
 
                 string sql = @" select e.ID as ExpenseID, e.ExpenseCategoryValue as month, e.DateTime as Date, et.Name as ExpenseType, e.Description, e.Amount, e.ExpensedBy from Expense as e
                                 left join ExpenseType as et on et.ID = e.ExpenseType
-                                where e.ExpenseCategoryValue = '" + monthWithYear + "' and e.Status = 1 and et.Status = 1 and et.ExpenseCategoryID = 1 order by e.DateTime desc";
+                                where e.ExpenseCategoryValue = '" + monthWithYear + "' and e.Status = 1 and et.Status = 1 order by e.DateTime desc";
 
                 lstExpenseMonthlyAll = await _crmDbContext.VMExpenseMonthly.FromSqlRaw(sql).ToListAsync();
 
@@ -77,7 +77,7 @@ namespace CRM.Services
 
                 string sql = @" select e.ID as ExpenseID, e.ExpenseCategoryValue as month, e.DateTime as Date, et.Name as ExpenseType, e.Description, e.Amount, e.ExpensedBy from Expense as e
                                 left join ExpenseType as et on et.ID = e.ExpenseType
-                                where e.ExpenseCategoryValue = '" + monthWithYear + "' and e.Status = 1 and et.Status = 1 and et.ExpenseCategoryID = 2 order by e.ID desc";
+                                where e.ExpenseCategoryValue = '" + monthWithYear + "' and e.Status = 1 and et.Status = 1 order by e.ID desc";
 
                 lstExpenseMonthlyAll = await _crmDbContext.VMExpenseMonthly.FromSqlRaw(sql).ToListAsync();
 
@@ -586,9 +586,20 @@ namespace CRM.Services
                 string getshowUrl = _configuration.GetSection("Attachments").GetSection("caregiverImageShowUrl").Value;
                 string showUrl = saveFilePath.Replace(_configuration.GetSection("Attachments").GetSection("expenseImageSaveUrl").Value, getshowUrl);
 
-                savedFilePath = showUrl; // Set the correct file path to return
+                savedFilePath = showUrl; 
 
                 return true;
+            }
+
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine($"UnauthorizedAccessException: {JsonConvert.SerializeObject(ex)} {ex}");
+                return false;
+            }
+            catch (PathTooLongException ex)
+            {
+                Console.WriteLine($"PathTooLongException: {JsonConvert.SerializeObject(ex)} {ex}");
+                return false;
             }
             catch (Exception ex)
             {

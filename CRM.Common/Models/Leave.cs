@@ -49,22 +49,4 @@ namespace CRM.Common.Models
         FullDay = 1,
         HalfDay = 2
     }
-
-
-
-    public class LeaveType
-    {
-        private LeaveType()
-        {
-
-        }
-        public LeaveType(string title)
-        {
-            Title = title;
-        }
-
-        [Key]
-        public int Id { get; set; }
-        public string Title { get; set; }
-    }
 }

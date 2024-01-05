@@ -161,6 +161,8 @@ builder.Services.AddScoped<IExpenseAttachmentService, ExpenseAttachmentService>(
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDepositService, DepositService>();
 builder.Services.AddScoped<IExpensePermissionService, ExpensePermissionService>();
+builder.Services.AddScoped<ILeaveEmployeeService, LeaveEmployeeService>();
+builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
 
 /*-------------Service register area-------END-----*/
 
