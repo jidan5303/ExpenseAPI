@@ -16,6 +16,9 @@ namespace CRM.Common.Models
         public DateTime RequestDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public bool HalfDay { get; set; }
+        public bool FullDay { get; set; }
+        public string? TimeSlot { get; set; }
         public string? Comment { get; set; }
         public string? LeaveStatus { get; set; }
         public string? RejectionCause { get; set; }

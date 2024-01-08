@@ -15,5 +15,6 @@ namespace CRM.Services.Interface
         Task<ResponseMessage> AcceptLeaveRequest(RequestMessage requestMessage);
         Task<ResponseMessage> RejectLeaveRequest(RequestMessage requestMessage);
         Task<ResponseMessage> GetAllLeaveType(RequestMessage requestMessage);
+        Task<ResponseMessage> GetAllLeaveRequestByYear(RequestMessage requestMessage);
     }
 }

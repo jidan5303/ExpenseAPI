@@ -33,7 +33,7 @@ namespace CRM.Services.Services
                 exist.Status = (int)Enums.Status.Delete;
 
                 _crmDbContext.LeaveEmployee.Update(exist);
-                
+
                 await _crmDbContext.SaveChangesAsync();
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
                 responseMessage.Message = MessageConstant.DeleteSuccess;
@@ -79,7 +79,7 @@ namespace CRM.Services.Services
             try
             {
                 LeaveEmployee objLeaveEmployee = JsonConvert.DeserializeObject<LeaveEmployee>(requestMessage.RequestObj.ToString());
-                if(objLeaveEmployee.EmployeeID > 0)
+                if (objLeaveEmployee.EmployeeID > 0)
                 {
                     LeaveEmployee exist = _crmDbContext.LeaveEmployee.Where(x => x.EmployeeID == objLeaveEmployee.EmployeeID).AsNoTracking().FirstOrDefault();
                     _crmDbContext.LeaveEmployee.Update(objLeaveEmployee);
@@ -113,7 +113,12 @@ namespace CRM.Services.Services
                 var leaveTypes = _crmDbContext.LeaveType.ToList();
                 var employee = _crmDbContext.LeaveEmployee.Where(x => x.EmployeeID == employeeId).FirstOrDefault();
                 var leaveDurations = _crmDbContext.LeaveDuration.ToList();
-                var leaveRequests = _crmDbContext.LeaveRequest.Where(lr => lr.EmployeeID == employeeId && lr.LeaveStatus == "Accepted").ToList();
+                var currentYear = DateTime.Now.Year;
+                var leaveRequests = _crmDbContext.LeaveRequest
+                                    .Where(lr => lr.EmployeeID == employeeId &&
+                                                 lr.LeaveStatus == "Accepted" &&
+                                                 lr.StartDate.Year == currentYear && lr.EndDate.Year == currentYear)
+                                    .ToList();
 
                 var report = leaveTypes.Select(leaveType =>
                 {
