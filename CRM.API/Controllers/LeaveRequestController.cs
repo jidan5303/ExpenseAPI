@@ -28,6 +28,12 @@ namespace CRM.API.Controllers
             return await _leaveRequestService.GetAllLeaveRequestByYear(requestMessage);
         }
 
+        [HttpPost("GetAllLeaveRequestByID")]
+        public async Task<ResponseMessage> GetAllLeaveRequestByID(RequestMessage requestMessage)
+        {
+            return await _leaveRequestService.GetAllLeaveRequestByID(requestMessage);
+        }
+
         [HttpPost("SaveLeaveRequest")]
         public async Task<ResponseMessage> SaveLeaveRequest(RequestMessage requestMessage)
         {

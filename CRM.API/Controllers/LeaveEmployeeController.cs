@@ -22,6 +22,12 @@ namespace CRM.API.Controllers
             return await _employeeService.GetEmployee(requestMessage);
         }
 
+        [HttpPost("GetEmployeeByUserName")]
+        public async Task<ResponseMessage> GetEmployeeByUserName(RequestMessage requestMessage)
+        {
+            return await _employeeService.GetEmployeeByUserName(requestMessage);
+        }
+
         [HttpPost("SaveEmployee")]
         public async Task<ResponseMessage> SaveEmployee(RequestMessage requestMessage)
         {

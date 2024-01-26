@@ -13,5 +13,6 @@ namespace CRM.Services.Interface
         Task<ResponseMessage> SaveDeposit(RequestMessage requestMessage);
         Task<ResponseMessage> DeleteDeposit(RequestMessage requestMessage);
         Task<ResponseMessage> GetBalance(RequestMessage requestMessage);
+        Task<ResponseMessage> GetMonthlyExpenseSum(RequestMessage requestMessage);
     }
 }

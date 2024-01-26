@@ -13,5 +13,6 @@ namespace CRM.Services.Interface
         Task<ResponseMessage> GetEmployee(RequestMessage requestMessage);
         Task<ResponseMessage> DeleteEmployee(RequestMessage requestMessage);
         Task<ResponseMessage> GetLeaveBalance(RequestMessage requestMessage);
+        Task<ResponseMessage> GetEmployeeByUserName(RequestMessage requestMessage);
     }
 }

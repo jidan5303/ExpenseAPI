@@ -15,6 +15,7 @@ namespace CRM.Common.Models
         public string? Gender { get; set; }
         public DateTime? DOB { get; set; }
         public string? PositionName { get; set; }
+        public string? EmployeeType { get; set; }
         public int Status { get; set; }
     }
 }

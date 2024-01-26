@@ -12,6 +12,6 @@ namespace CRM.Common.Models
         public int DepositID { get; set; }
         public decimal DepositAmount { get; set; }
         public string? Description { get; set; }
-        public DateTime? DepositDate { get; set; }
+        public DateTime DepositDate { get; set; }
     }
 }

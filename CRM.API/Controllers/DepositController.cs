@@ -39,5 +39,11 @@ namespace CRM.API.Controllers
         {
             return await _depositService.GetBalance(requestMessage);
         }
+
+        [HttpPost("GetMonthlyExpenseSum")]
+        public async Task<ResponseMessage> GetMonthlyExpenseSum(RequestMessage requestMessage)
+        {
+            return await _depositService.GetMonthlyExpenseSum(requestMessage);
+        }
     }
 }

@@ -147,5 +147,29 @@ namespace CRM.Services.Services
 
             return responseMessage;
         }
+
+        public async Task<ResponseMessage> GetEmployeeByUserName(RequestMessage requestMessage)
+        {
+            ResponseMessage responseMessage = new ResponseMessage();
+            try
+            {
+                LeaveEmployee objEmployee = new LeaveEmployee();
+                var userName = requestMessage.RequestObj.ToString();
+                var user = _crmDbContext.ExpenseUser.Where(x => x.UserName == userName).FirstOrDefault();
+                objEmployee = await _crmDbContext.LeaveEmployee.Where(x => x.EmployeeID == user.EmployeeID).FirstOrDefaultAsync();
+                responseMessage.ResponseObj = objEmployee;
+                responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
+                //Log write
+                LogHelper.WriteLog(requestMessage?.RequestObj, (int)Enums.ActionType.View, requestMessage.UserID, "GetAllExpense");
+            }
+            catch (Exception ex)
+            {
+                responseMessage.Message = ExceptionHelper.ProcessException(ex, (int)Enums.ActionType.View,
+                    requestMessage.UserID, JsonConvert.SerializeObject(requestMessage.RequestObj), "GetAllExpense");
+                responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+            }
+
+            return responseMessage;
+        }
     }
 }
