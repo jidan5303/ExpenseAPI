@@ -3,6 +3,7 @@ using CRM.Common.DTO;
 using CRM.Common.Enums;
 using CRM.Common.Helper;
 using CRM.Common.Models;
+using CRM.Common.VM;
 using CRM.DataAccess;
 using CRM.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -160,6 +161,34 @@ namespace CRM.Services.Services
                 var currentYear = JsonConvert.DeserializeObject<int>(requestMessage.RequestObj.ToString());
                 List<LeaveRequest> lstLeaveRequest = await _context.LeaveRequest
                     .Where(x => x.Status == (int)Enums.Status.Active && x.StartDate.Year == currentYear && x.EndDate.Year == currentYear)
+                    .OrderByDescending(x => x.LeaveRequestID).ToListAsync();
+                foreach (var leave in lstLeaveRequest)
+                {
+                    leave.LeaveEmployee = await _context.LeaveEmployee.Where(x => x.EmployeeID == leave.EmployeeID).FirstOrDefaultAsync();
+                    leave.LeaveType = await _context.LeaveType.Where(x => x.LeaveTypeID == leave.LeaveTypeID).FirstOrDefaultAsync();
+                }
+
+                responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
+                responseMessage.ResponseObj = lstLeaveRequest;
+            }
+            catch (Exception ex)
+            {
+                responseMessage.Message = ExceptionHelper.ProcessException(ex, (int)Enums.ActionType.View,
+                    requestMessage.UserID, JsonConvert.SerializeObject(requestMessage.RequestObj), "GetAllExpense");
+                responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+            }
+
+            return responseMessage;
+        }
+
+        public async Task<ResponseMessage> GetAllEmployeeLeaveRequestByYear(RequestMessage requestMessage)
+        {
+            ResponseMessage responseMessage = new ResponseMessage();
+            try
+            {
+                VMEmployeeLeaveSearch searchObj = JsonConvert.DeserializeObject<VMEmployeeLeaveSearch>(requestMessage.RequestObj.ToString());
+                List<LeaveRequest> lstLeaveRequest = await _context.LeaveRequest
+                    .Where(x => x.Status == (int)Enums.Status.Active && x.StartDate.Year == searchObj.Year && x.EndDate.Year == searchObj.Year && x.EmployeeID == searchObj.UserID)
                     .OrderByDescending(x => x.LeaveRequestID).ToListAsync();
                 foreach (var leave in lstLeaveRequest)
                 {

@@ -45,5 +45,11 @@ namespace CRM.API.Controllers
         {
             return await _employeeService.GetLeaveBalance(requestMessage);
         }
+
+        [HttpPost("GetLeaveBalanceByYear")]
+        public async Task<ResponseMessage> GetLeaveBalanceByYear(RequestMessage requestMessage)
+        {
+            return await _employeeService.GetLeaveBalanceByYear(requestMessage);
+        }
     }
 }

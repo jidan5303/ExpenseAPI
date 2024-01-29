@@ -3,6 +3,7 @@ using CRM.Common.DTO;
 using CRM.Common.Enums;
 using CRM.Common.Helper;
 using CRM.Common.Models;
+using CRM.Common.VM;
 using CRM.DataAccess;
 using CRM.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -118,6 +119,49 @@ namespace CRM.Services.Services
                                     .Where(lr => lr.EmployeeID == employeeId &&
                                                  lr.LeaveStatus == "Accepted" &&
                                                  lr.StartDate.Year == currentYear && lr.EndDate.Year == currentYear)
+                                    .ToList();
+
+                var report = leaveTypes.Select(leaveType =>
+                {
+                    var allowance = leaveDurations.FirstOrDefault(ld => ld.LeaveTypeID == leaveType.LeaveTypeID)?.Duration ?? 0;
+                    var used = leaveRequests.Where(lr => lr.LeaveTypeID == leaveType.LeaveTypeID).Sum(lr => lr.Duration);
+                    var available = allowance - used;
+
+                    return new
+                    {
+                        LeaveTypeName = leaveType.LeaveTypeName,
+                        Allowance = allowance,
+                        Used = used,
+                        Available = available
+                    };
+                }).ToList();
+
+                responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
+                responseMessage.ResponseObj = report;
+            }
+            catch (Exception ex)
+            {
+                responseMessage.Message = ExceptionHelper.ProcessException(ex, (int)Enums.ActionType.View,
+                    requestMessage.UserID, JsonConvert.SerializeObject(requestMessage.RequestObj), "GetAllExpense");
+                responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+            }
+
+            return responseMessage;
+        }
+
+        public async Task<ResponseMessage> GetLeaveBalanceByYear(RequestMessage requestMessage)
+        {
+            ResponseMessage responseMessage = new ResponseMessage();
+            try
+            {
+                VMLeaveBalanceSearch searchObj = JsonConvert.DeserializeObject<VMLeaveBalanceSearch>(requestMessage.RequestObj.ToString());
+                var leaveTypes = _crmDbContext.LeaveType.ToList();
+                var employee = _crmDbContext.LeaveEmployee.Where(x => x.EmployeeID == searchObj.UserID).FirstOrDefault();
+                var leaveDurations = _crmDbContext.LeaveDuration.ToList();
+                var leaveRequests = _crmDbContext.LeaveRequest
+                                    .Where(lr => lr.EmployeeID == searchObj.UserID &&
+                                                 lr.LeaveStatus == "Accepted" &&
+                                                 lr.StartDate.Year == searchObj.Year && lr.EndDate.Year == searchObj.Year)
                                     .ToList();
 
                 var report = leaveTypes.Select(leaveType =>
